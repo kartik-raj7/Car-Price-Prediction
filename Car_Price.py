@@ -5,7 +5,9 @@ from sklearn.linear_model import SGDRegressor
 from sklearn.preprocessing import StandardScaler
 from sklearn.metrics import mean_squared_error
 from sklearn.model_selection import train_test_split
-
+from IPython.display import display
+import ipywidgets as widgets
+from scipy.stats import skew
 st.set_page_config(layout="wide")
 
 # Centered Title
@@ -57,6 +59,7 @@ st.write(
     "‘Car ID’ was simply a unique identifier without predictive value, and ‘Car Name’ was mostly a branding label that did not significantly affect price predictions. "
     "Removing them helped improve model focus and performance."
 )
+
 
 
 col1, col2, col3 = st.columns(3)
@@ -118,7 +121,8 @@ for col_to_remove in ['price', 'carbody', 'enginetype', 'fuelsystem','fueltype',
 
 # Dropdown for selecting a feature
 selected_feature = st.selectbox("Select a feature to see its relationship with Price:", numerical_cols)
-
+####
+####
 col1, col2, col3 = st.columns([1,2,1])  # Middle column is wider
 
 # Only plot inside the center column
@@ -130,6 +134,27 @@ with col2:
     ax.set_ylabel('Price')
     st.pyplot(fig)
 
+# Streamlit selectbox to select a numerical column
+selected_feature = st.selectbox("Select a feature to see its Gaussian Distribution:", numerical_cols)
+
+col1, col2, col3 = st.columns([1,2,1])  # Middle column is wider
+# Function to plot Gaussian chart using seaborn
+def plot_gaussian(column):
+    data = clean_df[column].dropna()
+    skew_value = skew(data)
+    st.markdown(f"**Skewness for {column}:** `{skew_value:.4f}`")
+    fig, ax = plt.subplots(figsize=(8, 4))  # Create figure and axis objects
+    sns.kdeplot(data=clean_df, x=column, fill=True, color='skyblue', ax=ax)
+    ax.set_title(f'Gaussian Distribution of {column}')
+    ax.set_xlabel(column)
+    ax.set_ylabel('Density')
+    ax.grid(True)
+    st.pyplot(fig)  # Pass the figure explicitly to Streamlit
+
+# Plot the Gaussian chart based on the selected feature
+with col2:
+    plot_gaussian(selected_feature)
+st.write("Compression Ratio is highly skewed towards right whereas car length is left skewed from the chart")
 
 st.write("An important observation was Price of Cars decreases initially inidcating that the cars with higher risks are cheaper but then it increases again indicating that some high end cars are expensive")
 col1, col2, col3 = st.columns([1,2,1])  # Middle column is wider
@@ -161,8 +186,12 @@ df_filtered = clean_df.drop(columns=excluded_columns)
 # Select numerical columns
 df_numerical = df_filtered.select_dtypes(include=['number'])
 
-# Compute the correlation matrix
-correlation_matrix = df_numerical.corr()
+@st.cache_data
+def compute_correlation_matrix(df):
+    return df.corr()
+
+# Compute the correlation matrix and cache it
+correlation_matrix = compute_correlation_matrix(df_numerical)
 
 # Center the plot using columns
 st.subheader("Feature Correlation Matrix")
@@ -238,11 +267,14 @@ linear_regression_metrics = {
         "2359.37 (20.11%)"
     ]
 }
-
+@st.cache_data
+def create_linear_regression_df(metrics):
+    return pd.DataFrame(metrics)
 # Create DataFrame
-linear_regression_df = pd.DataFrame(linear_regression_metrics)
+linear_regression_df = create_linear_regression_df(linear_regression_metrics)
 
 # Streamlit display
+
 st.subheader("Linear Regression - Model Evaluation at Different Stages")
 st.dataframe(linear_regression_df)
 
@@ -257,7 +289,10 @@ sgd_gridsearch_results = {
 }
 
 # Create DataFrame
-sgd_gridsearch_df = pd.DataFrame(sgd_gridsearch_results)
+@st.cache_data
+def gridsearch_df(model_eval):
+    return pd.DataFrame(model_eval)
+sgd_gridsearch_df = gridsearch_df(sgd_gridsearch_results)
 
 # Show in Streamlit
 st.subheader("SGD Regressor - Grid Search CV Results")
@@ -294,9 +329,11 @@ model_evaluation = {
         "3674.58 (36.94%)"
     ]
 }
-
+@st.cache_data
+def create_model_eval_df(model_eval):
+    return pd.DataFrame(model_eval)
 # Create dataframe
-model_eval_df = pd.DataFrame(model_evaluation)
+model_eval_df = create_model_eval_df(model_evaluation)
 
 # Display in Streamlit
 st.subheader("Model Evaluation Results Across Different Models and Techniques")
@@ -331,6 +368,14 @@ st.write(
     "- **R² Score**: 0.9049\n"
     "- **Mean Absolute Error (MAE)**: 782.96 (7.87%)\n"
     "- **Root Mean Squared Error (RMSE)**: 1128.44 (11.34%)"
+)
+
+st.write(
+    "After dropping more features which were demonstarting high collinearity (such as Horsepower, Curbweight, etc.), "
+    "the model was retrained using the selected important features. The performance improved noticeably:\n\n"
+    "- **R² Score**: 0.9062\n"
+    "- **Mean Absolute Error (MAE)**: 752.16 (7.56%)\n"
+    "- **Root Mean Squared Error (RMSE)**: 1120.35 (11.26%)"
 )
 
 st.subheader("Final Observations and Recommendations")
