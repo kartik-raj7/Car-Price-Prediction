@@ -377,6 +377,8 @@ st.write(
     "- **Mean Absolute Error (MAE)**: 752.16 (7.56%)\n"
     "- **Root Mean Squared Error (RMSE)**: 1120.35 (11.26%)"
 )
+st.subheader("MSE Chart for various features")
+st.image("https://i.ibb.co/9970bTPd/mse-final.png", caption="How Model Performs Selecting Various Features")
 
 st.subheader("Final Observations and Recommendations")
 
