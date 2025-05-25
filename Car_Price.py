@@ -94,67 +94,67 @@ with col3:
     st.pyplot(fig3)
     st.write("✅ Most cars use gas.")
 
-st.subheader("Outlier Detection and Treatment")
-st.write(
-    "We used boxplots to detect outliers in numerical features. In cases where outliers appeared very rarely (less than 10 instances), "
-    "we decided to remove them. This helped ensure the model focused on learning from the main patterns in the data without being skewed by extreme rare values."
-)
+# st.subheader("Outlier Detection and Treatment")
+# st.write(
+#     "We used boxplots to detect outliers in numerical features. In cases where outliers appeared very rarely (less than 10 instances), "
+#     "we decided to remove them. This helped ensure the model focused on learning from the main patterns in the data without being skewed by extreme rare values."
+# )
 
 
-st.subheader("Feature Engineering and Encoding")
-st.write(
-    "To prepare the data for modeling, we applied encoding techniques to convert categorical variables into numerical format:\n"
-    "- For features like 'fuel type', 'aspiration', 'drive wheel', 'engine location', 'cylinder number', and 'door number', we used **Label Encoding** since they have a simple set of categories.\n"
-    "- For more complex features like 'car body', 'engine type', and 'fuel system', we applied **Target Encoding** to capture their relationship with the car price directly.\n"
-    "\n"
-    "Additionally, we verified that there were **no missing values** in the dataset, ensuring clean and complete data for modeling."
-)
+# st.subheader("Feature Engineering and Encoding")
+# st.write(
+#     "To prepare the data for modeling, we applied encoding techniques to convert categorical variables into numerical format:\n"
+#     "- For features like 'fuel type', 'aspiration', 'drive wheel', 'engine location', 'cylinder number', and 'door number', we used **Label Encoding** since they have a simple set of categories.\n"
+#     "- For more complex features like 'car body', 'engine type', and 'fuel system', we applied **Target Encoding** to capture their relationship with the car price directly.\n"
+#     "\n"
+#     "Additionally, we verified that there were **no missing values** in the dataset, ensuring clean and complete data for modeling."
+# )
 
 clean_df = pd.read_csv(r"C:\Users\karti\OneDrive\Desktop\Car Price Prediction\clean_df.csv")
-st.dataframe(clean_df.head())
+# st.dataframe(clean_df.head())
 
 # Get numerical columns except 'price'
 numerical_cols = clean_df.select_dtypes(include='number').columns.tolist()
-for col_to_remove in ['price', 'carbody', 'enginetype', 'fuelsystem','fueltype','aspiration','symboling','doornumber','drivewheel','enginelocation','cylindernumber']:
-    if col_to_remove in numerical_cols:
-        numerical_cols.remove(col_to_remove)
+# for col_to_remove in ['price', 'carbody', 'enginetype', 'fuelsystem','fueltype','aspiration','symboling','doornumber','drivewheel','enginelocation','cylindernumber']:
+#     if col_to_remove in numerical_cols:
+#         numerical_cols.remove(col_to_remove)
 
 # Dropdown for selecting a feature
-selected_feature = st.selectbox("Select a feature to see its relationship with Price:", numerical_cols)
-####
-####
-col1, col2, col3 = st.columns([1,2,1])  # Middle column is wider
+# selected_feature = st.selectbox("Select a feature to see its relationship with Price:", numerical_cols)
+# ####
+# ####
+# col1, col2, col3 = st.columns([1,2,1])  # Middle column is wider
 
 # Only plot inside the center column
-with col2:
-    fig, ax = plt.subplots(figsize=(4, 3))  # Smaller figure
-    sns.scatterplot(x=clean_df[selected_feature], y=clean_df['price'], ax=ax)
-    ax.set_title(f'{selected_feature} vs Price')
-    ax.set_xlabel(selected_feature)
-    ax.set_ylabel('Price')
-    st.pyplot(fig)
+# with col2:
+#     fig, ax = plt.subplots(figsize=(4, 3))  # Smaller figure
+#     sns.scatterplot(x=clean_df[selected_feature], y=clean_df['price'], ax=ax)
+#     ax.set_title(f'{selected_feature} vs Price')
+#     ax.set_xlabel(selected_feature)
+#     ax.set_ylabel('Price')
+#     st.pyplot(fig)
 
-# Streamlit selectbox to select a numerical column
-selected_feature = st.selectbox("Select a feature to see its Gaussian Distribution:", numerical_cols)
+# # Streamlit selectbox to select a numerical column
+# selected_feature = st.selectbox("Select a feature to see its Gaussian Distribution:", numerical_cols)
 
 col1, col2, col3 = st.columns([1,2,1])  # Middle column is wider
 # Function to plot Gaussian chart using seaborn
-def plot_gaussian(column):
-    data = clean_df[column].dropna()
-    skew_value = skew(data)
-    st.markdown(f"**Skewness for {column}:** `{skew_value:.4f}`")
-    fig, ax = plt.subplots(figsize=(8, 4))  # Create figure and axis objects
-    sns.kdeplot(data=clean_df, x=column, fill=True, color='skyblue', ax=ax)
-    ax.set_title(f'Gaussian Distribution of {column}')
-    ax.set_xlabel(column)
-    ax.set_ylabel('Density')
-    ax.grid(True)
-    st.pyplot(fig)  # Pass the figure explicitly to Streamlit
+# def plot_gaussian(column):
+#     data = clean_df[column].dropna()
+#     skew_value = skew(data)
+#     st.markdown(f"**Skewness for {column}:** `{skew_value:.4f}`")
+#     fig, ax = plt.subplots(figsize=(8, 4))  # Create figure and axis objects
+#     sns.kdeplot(data=clean_df, x=column, fill=True, color='skyblue', ax=ax)
+#     ax.set_title(f'Gaussian Distribution of {column}')
+#     ax.set_xlabel(column)
+#     ax.set_ylabel('Density')
+#     ax.grid(True)
+#     st.pyplot(fig)  # Pass the figure explicitly to Streamlit
 
 # Plot the Gaussian chart based on the selected feature
-with col2:
-    plot_gaussian(selected_feature)
-st.write("Compression Ratio is highly skewed towards right whereas car length is left skewed from the chart")
+# with col2:
+#     plot_gaussian(selected_feature)
+# st.write("Compression Ratio is highly skewed towards right whereas car length is left skewed from the chart")
 
 st.write("An important observation was Price of Cars decreases initially inidcating that the cars with higher risks are cheaper but then it increases again indicating that some high end cars are expensive")
 col1, col2, col3 = st.columns([1,2,1])  # Middle column is wider
@@ -180,67 +180,67 @@ st.write(
     "- **City MPG** and **highway MPG** show a negative correlation with price (higher MPG, lower price)."
 )
 
-excluded_columns = ['carbody', 'enginetype', 'fuelsystem','enginelocation']
-df_filtered = clean_df.drop(columns=excluded_columns)
+# excluded_columns = ['carbody', 'enginetype', 'fuelsystem','enginelocation']
+# df_filtered = clean_df.drop(columns=excluded_columns)
 
-# Select numerical columns
-df_numerical = df_filtered.select_dtypes(include=['number'])
+# # Select numerical columns
+# df_numerical = df_filtered.select_dtypes(include=['number'])
 
-@st.cache_data
-def compute_correlation_matrix(df):
-    return df.corr()
+# @st.cache_data
+# def compute_correlation_matrix(df):
+#     return df.corr()
 
-# Compute the correlation matrix and cache it
-correlation_matrix = compute_correlation_matrix(df_numerical)
+# # Compute the correlation matrix and cache it
+# correlation_matrix = compute_correlation_matrix(df_numerical)
 
-# Center the plot using columns
-st.subheader("Feature Correlation Matrix")
-fig, ax = plt.subplots(figsize=(10,8))
-sns.heatmap(correlation_matrix, annot=True, cmap='coolwarm', fmt=".2f", ax=ax)
-ax.set_title("Correlation between Features")
-st.pyplot(fig)
+# # Center the plot using columns
+# st.subheader("Feature Correlation Matrix")
+# fig, ax = plt.subplots(figsize=(10,8))
+# sns.heatmap(correlation_matrix, annot=True, cmap='coolwarm', fmt=".2f", ax=ax)
+# ax.set_title("Correlation between Features")
+# st.pyplot(fig)
 
-st.subheader("Detailed Correlation Analysis")
-st.write(
-    """
-    Analyzing the correlation matrix, we observed the following key insights:
+# st.subheader("Detailed Correlation Analysis")
+# st.write(
+#     """
+#     Analyzing the correlation matrix, we observed the following key insights:
 
-    1. **Symboling** - No significant correlation with price.
-    2. **Wheelbase** - Moderate positive correlation with price (0.67).
-    3. **Carlength** - Strong positive correlation with price (0.76).
-    4. **Carwidth** - Strong positive correlation with price (0.75).
-    5. **Carheight** - Weak negative correlation with price (-0.17).
-    6. **Curbweight** - Strong positive correlation with price (0.76).
-    7. **Enginesize** - Very strong positive correlation with price (0.75).
-    8. **Bore** - Moderate correlation with enginesize (0.69).
-    9. **Stroke** - Moderate positive with bore but negative with price (-0.56).
-    10. **Compression Ratio** - Weakly correlated with price.
-    11. **Horsepower** - Strong relationship with enginesize (0.87).
-    12. **Peak RPM** - Weakly related to horsepower and enginesize.
-    13. **City MPG** - Strong negative correlation with price (-0.71).
-    14. **Highway MPG** - Strong negative correlation with price (-0.71).
+#     1. **Symboling** - No significant correlation with price.
+#     2. **Wheelbase** - Moderate positive correlation with price (0.67).
+#     3. **Carlength** - Strong positive correlation with price (0.76).
+#     4. **Carwidth** - Strong positive correlation with price (0.75).
+#     5. **Carheight** - Weak negative correlation with price (-0.17).
+#     6. **Curbweight** - Strong positive correlation with price (0.76).
+#     7. **Enginesize** - Very strong positive correlation with price (0.75).
+#     8. **Bore** - Moderate correlation with enginesize (0.69).
+#     9. **Stroke** - Moderate positive with bore but negative with price (-0.56).
+#     10. **Compression Ratio** - Weakly correlated with price.
+#     11. **Horsepower** - Strong relationship with enginesize (0.87).
+#     12. **Peak RPM** - Weakly related to horsepower and enginesize.
+#     13. **City MPG** - Strong negative correlation with price (-0.71).
+#     14. **Highway MPG** - Strong negative correlation with price (-0.71).
 
-    **Conclusion:**  
-    Price is most strongly influenced by carlength, curbweight, enginesize, and wheelbase. 
-    Larger and more powerful cars tend to be more expensive.
-    """
-)
+#     **Conclusion:**  
+#     Price is most strongly influenced by carlength, curbweight, enginesize, and wheelbase. 
+#     Larger and more powerful cars tend to be more expensive.
+#     """
+# )
 
-st.subheader("Feature Selection")
-st.write(
-    "To identify the most important features for predicting car price, we applied multiple feature selection techniques, including **SelectKBest**, **Recursive Feature Elimination (RFE)**, **Lasso Regression**, and **Random Forest Regressor**.\n"
-    "After analyzing feature importance across these methods, we selected the following 10 features for modeling:\n"
-    "- Curbweight\n"
-    "- Highway MPG\n"
-    "- Horsepower\n"
-    "- Carlengh\n"
-    "- Wheelbase\n"
-    "- Enginesize\n"
-    "- Carwidth\n"
-    "- Fuelsystem\n"
-    "- Peak RPM\n"
-    "- City MPG\n"
-)
+# st.subheader("Feature Selection")
+# st.write(
+#     "To identify the most important features for predicting car price, we applied multiple feature selection techniques, including **SelectKBest**, **Recursive Feature Elimination (RFE)**, **Lasso Regression**, and **Random Forest Regressor**.\n"
+#     "After analyzing feature importance across these methods, we selected the following 10 features for modeling:\n"
+#     "- Curbweight\n"
+#     "- Highway MPG\n"
+#     "- Horsepower\n"
+#     "- Carlengh\n"
+#     "- Wheelbase\n"
+#     "- Enginesize\n"
+#     "- Carwidth\n"
+#     "- Fuelsystem\n"
+#     "- Peak RPM\n"
+#     "- City MPG\n"
+# )
 
 # Your final metric data
 st.markdown("<h2 style='font-weight: bold;'>Model Evaluation and Tuning</h2>", unsafe_allow_html=True)
